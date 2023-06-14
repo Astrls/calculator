@@ -11,8 +11,6 @@ document.body.style.display = "flex";
 document.body.style.flexDirection = "column";
 document.body.style.padding = "40px";
 
-//clearer buttons
-
 //Display for the result
 let displayResult = document.createElement("div");
 displayResult.className = "display-result";
@@ -53,7 +51,7 @@ const style = (element) => {
 };
 
 //Apending buttons
-let createColumn = (colstart, array) => {
+const createColumn = (colstart, array) => {
   for (i = 0; i < array.length; i++) {
     let newDiv = document.createElement("div");
     newDiv.setAttribute("id", `${array[i]}`);
