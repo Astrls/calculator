@@ -194,24 +194,26 @@ document.addEventListener("keyup", (event) => {
 });
 
 //Adding feedback on click for UX
+let addFeedback = (trigger1,trigger2) => {
 allButtons.forEach((element) => {
-  element.addEventListener("mousedown", (event) => {
-    let mouseDown = document.getElementById(`${event.target.id}`);
-    console.log(mouseDown);
-    mouseDown.style.boxShadow = "0px 0px 0px 2px white inset";
+  element.addEventListener(trigger1, (event) => {
+    let eventDown = document.getElementById(`${event.target.id}`);
+    eventDown.style.boxShadow = "0px 0px 0px 2px white inset";
   });
-  element.addEventListener("mouseup", (event) => {
-    let mouseUp = document.getElementById(`${event.target.id}`);
+  element.addEventListener(trigger2, (event) => {
+    let eventUp = document.getElementById(`${event.target.id}`);
     addBackgroundColor(allButtons);
-    mouseUp.style.boxShadow = "none";
+    eventUp.style.boxShadow = "none";
   });
-});
+});}
+
+addFeedback("mousedown","mouseup");
+addFeedback("touchstart","touchend");
 
 //Adding feedback on keypress for UX
 document.addEventListener("keydown", (event) => {
   if (event.key.match(numbers) || event.key.match(operationsButtons)) {
     let mouseDown = document.getElementById(`${event.key}`);
-    console.log(mouseDown);
     mouseDown.style.boxShadow = "0px 0px 0px 2px white inset";
   }
 });
@@ -225,12 +227,11 @@ document.addEventListener("keyup", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (event.code == "Backspace") {
-    console.log("backspace")
-    displayResult.innerText = displayResult.innerText.slice(0,-1);
+    displayResult.innerText = displayResult.innerText.slice(0, -1);
+    if (displayResult.innerText === "") {
+      displayResult.append("0");
+    }
+    
   }
 });
 
-
-if (displayResult.innerText === ""){
-  displayResult.innerText = "0"
-}
