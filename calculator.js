@@ -1,5 +1,15 @@
-let main = document.querySelector("main");
+let mainContainer = document.createElement("div");
+mainContainer.className = "main-container";
+mainContainer.style.border = "lightgrey solid 2px";
+mainContainer.style.padding = "20px";
+mainContainer.style.borderRadius = "10px";
+mainContainer.style.maxWidth = "600px";
+mainContainer.style.minWidth = "280px";
 
+let main = document.querySelector("main");
+main.append(mainContainer);
+
+//Columns content put in arrays
 const colOne = ["(", "7", "4", "1", "0"];
 const colTwo = [")", "8", "5", "2", "."];
 const colThree = ["%", "9", "6", "3", "="];
@@ -11,13 +21,11 @@ document.body.style.display = "flex";
 document.body.style.flexDirection = "column";
 document.body.style.padding = "40px";
 
-//clearer buttons
-
 //Display for the result
 let displayResult = document.createElement("div");
 displayResult.className = "display-result";
 displayResult.style.border = "lightgrey solid 2px";
-displayResult.style.width = "600px";
+displayResult.style.maxWidth = "587px";
 displayResult.style.fontSize = "40px";
 displayResult.style.textAlign = "right";
 displayResult.style.paddingRight = "10px";
@@ -42,9 +50,8 @@ calcContainer.style.maxWidth = "600px";
 
 // Styling for the standard buttons
 const style = (element) => {
-  element.style.backgroundColor = "#a8a8a7";
-  element.style.width = "146px";
-  element.style.height = "80px";
+  element.style.minWidth = "60px";
+  element.style.minHeight = "60px";
   element.style.borderRadius = "5px";
   element.style.display = "flex";
   element.style.alignItems = "center";
@@ -53,7 +60,7 @@ const style = (element) => {
 };
 
 //Apending buttons
-let createColumn = (colstart, array) => {
+const createColumn = (colstart, array) => {
   for (i = 0; i < array.length; i++) {
     let newDiv = document.createElement("div");
     newDiv.setAttribute("id", `${array[i]}`);
@@ -71,31 +78,50 @@ createColumn(2, colTwo);
 createColumn(3, colThree);
 createColumn(4, colFour);
 
-main.append(displayResult);
-main.append(calcContainer);
+mainContainer.append(displayResult);
+mainContainer.append(calcContainer);
 
 // Adapting the color of specific buttons
-let allButtons = document.querySelectorAll(".container > div");
-let numbers = "[0-9]";
-let operationsButtons = "\\+|\\-|\\*|/";
+const allButtons = document.querySelectorAll(".container > div");
+const numbers = "[0-9]";
+const operationsButtons = "\\+|\\-|\\*|/|\\(|\\)";
 
-allButtons.forEach((element) => {
-  if (element.id.match(numbers) || element.id.match("\\.")) {
-    element.style.backgroundColor = "#e8e8e8";
-  } else if (element.id.match("=")) {
-    element.style.backgroundColor = "#1c8ced";
-  }
-});
+let addBackgroundColor = (elements) => {
+  elements.forEach((element) => {
+    if (element.id.match(numbers) || element.id.match("\\.")) {
+      element.style.backgroundColor = "#e8e8e8";
+    } else if (element.id.match("=")) {
+      element.style.backgroundColor = "#1c8ced";
+    } else if (
+      element.id.match(operationsButtons) ||
+      element.id.match("AC") ||
+      element.id.match("%")
+    ) {
+      element.style.backgroundColor = "#a8a8a7";
+    }
+  });
+};
+
+addBackgroundColor(allButtons);
 
 //Add a log of operations
+
+let logContainer = document.createElement("div");
+logContainer.className = "log-container";
+logContainer.style.maxWidth = "600px";
+logContainer.style.minWidth = "280px";
+logContainer.style.display = "flex";
+logContainer.style.flexDirection = "column";
+logContainer.style.alignItems = "center";
+
+main.append(logContainer);
 
 let logButton = document.createElement("button");
 logButton.className = "log-button";
 logButton.innerText = "Show/hide previous operations";
 logButton.style.width = "220px";
 logButton.style.height = "60px";
-logButton.style.marginLeft = "190px";
-logButton.style.marginTop = "80px";
+logButton.style.marginTop = "40px";
 logButton.style.backgroundColor = "#368a4b";
 logButton.style.border = "none";
 logButton.style.borderRadius = "10px";
@@ -105,10 +131,11 @@ logButton.style.fontWeight = "600";
 let opLog = document.createElement("div");
 opLog.className = "operation-log";
 opLog.style.visibility = "visible";
-opLog.style.marginTop = "50px";
+opLog.style.marginTop = "40px";
+opLog.style.fontSize = "2em";
 
-document.body.append(logButton);
-document.body.append(opLog);
+logContainer.append(logButton);
+logContainer.append(opLog);
 
 //Add a button to toggle the log
 let selectLog = document.querySelector(".operation-log");
@@ -148,7 +175,7 @@ allButtons.forEach((element) => {
   });
 });
 
-//Use Enter key to calculate
+//Use keyboard keys to calculate
 document.addEventListener("keyup", (event) => {
   if (event.code == "Enter") {
     let newLog = document.createElement("p");
@@ -157,5 +184,53 @@ document.addEventListener("keyup", (event) => {
     displayResult.innerText = finalResult;
     newLog.append(` = ${finalResult}`);
     selectLog.append(newLog);
+  } else if (event.key.match(numbers) || event.key.match(operationsButtons)) {
+    if (displayResult.innerText == "0") {
+      displayResult.innerText = event.key;
+    } else if (displayResult.innerText != "0") {
+      displayResult.innerText += event.key;
+    }
   }
 });
+
+//Adding feedback on click for UX
+allButtons.forEach((element) => {
+  element.addEventListener("mousedown", (event) => {
+    let mouseDown = document.getElementById(`${event.target.id}`);
+    console.log(mouseDown);
+    mouseDown.style.boxShadow = "0px 0px 0px 2px white inset";
+  });
+  element.addEventListener("mouseup", (event) => {
+    let mouseUp = document.getElementById(`${event.target.id}`);
+    addBackgroundColor(allButtons);
+    mouseUp.style.boxShadow = "none";
+  });
+});
+
+//Adding feedback on keypress for UX
+document.addEventListener("keydown", (event) => {
+  if (event.key.match(numbers) || event.key.match(operationsButtons)) {
+    let mouseDown = document.getElementById(`${event.key}`);
+    console.log(mouseDown);
+    mouseDown.style.boxShadow = "0px 0px 0px 2px white inset";
+  }
+});
+document.addEventListener("keyup", (event) => {
+  if (event.key.match(numbers) || event.key.match(operationsButtons)) {
+    let mouseUp = document.getElementById(`${event.key}`);
+    addBackgroundColor(allButtons);
+    mouseUp.style.boxShadow = "none";
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.code == "Backspace") {
+    console.log("backspace")
+    displayResult.innerText = displayResult.innerText.slice(0,-1);
+  }
+});
+
+
+if (displayResult.innerText === ""){
+  displayResult.innerText = "0"
+}
