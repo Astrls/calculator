@@ -19,7 +19,7 @@ const colFour = ["AC", "/", "*", "-", "+"];
 document.body.style.fontFamily = "Arial";
 document.body.style.display = "flex";
 document.body.style.flexDirection = "column";
-document.body.style.padding = "40px";
+document.body.style.padding = "10px";
 
 //Display for the result
 let displayResult = document.createElement("div");
